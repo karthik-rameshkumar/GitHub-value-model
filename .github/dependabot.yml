@@ -1,0 +1,53 @@
+version: 2
+updates:
+  # Backend npm dependencies
+  - package-ecosystem: "npm"
+    directory: "/backend"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "karthik-rameshkumar"
+    assignees:
+      - "karthik-rameshkumar"
+    commit-message:
+      prefix: "chore(backend)"
+      include: "scope"
+
+  # Frontend npm dependencies
+  - package-ecosystem: "npm"
+    directory: "/frontend"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "karthik-rameshkumar"
+    assignees:
+      - "karthik-rameshkumar"
+    commit-message:
+      prefix: "chore(frontend)"
+      include: "scope"
+
+  # Docker dependencies
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    reviewers:
+      - "karthik-rameshkumar"
+    assignees:
+      - "karthik-rameshkumar"
+    commit-message:
+      prefix: "chore(docker)"
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    reviewers:
+      - "karthik-rameshkumar"
+    assignees:
+      - "karthik-rameshkumar"
+    commit-message:
+      prefix: "chore(ci)"
