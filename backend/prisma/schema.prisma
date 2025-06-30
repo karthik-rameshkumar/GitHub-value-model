@@ -1,0 +1,164 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  username  String   @unique
+  email     String   @unique
+  name      String?
+  avatarUrl String?  @map("avatar_url")
+  githubId  Int?     @unique @map("github_id")
+  role      UserRole @default(DEVELOPER)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  teamMembers TeamMember[]
+  deployments Deployment[]
+
+  @@map("users")
+}
+
+model Team {
+  id                   String   @id @default(uuid())
+  name                 String
+  description          String?
+  githubOrganization   String?  @map("github_organization")
+  createdAt           DateTime @default(now()) @map("created_at")
+  updatedAt           DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  members       TeamMember[]
+  repositories  Repository[]
+  metrics       Metric[]
+  projects      Project[]
+
+  @@map("teams")
+}
+
+model TeamMember {
+  id     String   @id @default(uuid())
+  teamId String   @map("team_id")
+  userId String   @map("user_id")
+  role   TeamRole @default(MEMBER)
+
+  // Relations
+  team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([teamId, userId])
+  @@map("team_members")
+}
+
+model Project {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  teamId      String   @map("team_id")
+  status      String   @default("active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  team         Team         @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  repositories Repository[]
+  metrics      Metric[]
+
+  @@map("projects")
+}
+
+model Repository {
+  id          String   @id @default(uuid())
+  name        String
+  fullName    String   @unique @map("full_name")
+  description String?
+  language    String?
+  githubId    Int?     @unique @map("github_id")
+  teamId      String   @map("team_id")
+  projectId   String?  @map("project_id")
+  status      String   @default("active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  team        Team         @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  project     Project?     @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  deployments Deployment[]
+
+  @@map("repositories")
+}
+
+model Metric {
+  id         String     @id @default(uuid())
+  metricType String     @map("metric_type")
+  zone       MetricZone
+  value      Float
+  teamId     String     @map("team_id")
+  projectId  String?    @map("project_id")
+  timestamp  DateTime   @default(now())
+  metadata   Json?
+  createdAt  DateTime   @default(now()) @map("created_at")
+  updatedAt  DateTime   @updatedAt @map("updated_at")
+
+  // Relations
+  team    Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  project Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
+
+  @@map("metrics")
+}
+
+model Deployment {
+  id           String   @id @default(uuid())
+  repositoryId String   @map("repository_id")
+  sha          String
+  environment  String   @default("production")
+  status       String   @default("success")
+  deployedAt   DateTime @default(now()) @map("deployed_at")
+  deployedBy   String   @map("deployed_by")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  // Relations
+  repository Repository @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
+  user       User       @relation(fields: [deployedBy], references: [id], onDelete: Cascade)
+
+  @@map("deployments")
+}
+
+model GitHubConfig {
+  id           String   @id @default(uuid())
+  clientId     String   @map("client_id")
+  clientSecret String   @map("client_secret")
+  webhookSecret String? @map("webhook_secret")
+  organization String?
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@map("github_config")
+}
+
+enum UserRole {
+  ADMIN
+  TEAM_LEAD
+  DEVELOPER
+}
+
+enum TeamRole {
+  LEAD
+  MEMBER
+}
+
+enum MetricZone {
+  QUALITY
+  VELOCITY
+  HAPPINESS
+  BUSINESS
+}

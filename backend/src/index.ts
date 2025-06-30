@@ -7,8 +7,10 @@ import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
 
 import healthRoutes from './routes/health';
+import metricsRoutes from './routes/metrics';
 import { errorHandler } from './middleware/errorHandler';
 import { requestLogger } from './middleware/requestLogger';
+import { db } from './services/database';
 
 // Load environment variables
 dotenv.config();
@@ -47,7 +49,10 @@ app.use(requestLogger);
 // Routes
 app.use('/health', healthRoutes);
 
-// API routes placeholder
+// API v1 routes
+app.use('/api/v1/metrics', metricsRoutes);
+
+// API routes placeholder for backward compatibility
 app.use('/api', (req, res) => {
   res.json({ message: 'ESSP Dashboard API v1.0.0' });
 });
@@ -72,22 +77,28 @@ app.use('*', (req, res) => {
 
 // Only start server if not in test environment
 if (process.env.NODE_ENV !== 'test') {
+  // Initialize database connection
+  db.connect().catch(console.error);
+
   const server = app.listen(PORT, () => {
     console.log(`🚀 ESSP Dashboard Backend running on port ${PORT}`);
     console.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
     console.log(`🏥 Health check: http://localhost:${PORT}/health`);
+    console.log(`📋 API v1: http://localhost:${PORT}/api/v1`);
   });
 
   // Graceful shutdown
-  process.on('SIGTERM', () => {
+  process.on('SIGTERM', async () => {
     console.log('SIGTERM received. Shutting down gracefully...');
+    await db.disconnect();
     server.close(() => {
       console.log('Server closed.');
     });
   });
 
-  process.on('SIGINT', () => {
+  process.on('SIGINT', async () => {
     console.log('SIGINT received. Shutting down gracefully...');
+    await db.disconnect();
     server.close(() => {
       console.log('Server closed.');
     });

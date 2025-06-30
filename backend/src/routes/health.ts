@@ -33,7 +33,7 @@ router.get('/', (req, res) => {
 });
 
 // Database health check
-router.get('/db', async (req, res) => {
+router.get('/db', async (req, res): Promise<void> => {
   try {
     const client = await pool.connect();
     const result = await client.query('SELECT NOW()');
@@ -61,7 +61,7 @@ router.get('/db', async (req, res) => {
 });
 
 // Redis health check
-router.get('/redis', async (req, res) => {
+router.get('/redis', async (req, res): Promise<void> => {
   try {
     const pong = await redisClient.ping();
     res.status(200).json({
@@ -82,7 +82,7 @@ router.get('/redis', async (req, res) => {
 });
 
 // Comprehensive health check
-router.get('/all', async (req, res) => {
+router.get('/all', async (req, res): Promise<void> => {
   const healthChecks = {
     api: { status: 'healthy' },
     database: { status: 'unknown' },
