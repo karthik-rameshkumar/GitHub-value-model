@@ -48,7 +48,7 @@ const HealthCheck: React.FC = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status: string): 'success' | 'error' | 'warning' => {
     switch (status) {
       case 'healthy':
         return 'success';
@@ -100,7 +100,7 @@ const HealthCheck: React.FC = () => {
             <Chip
               icon={getStatusIcon(health.status)}
               label={`Overall Status: ${health.status.toUpperCase()}`}
-              color={getStatusColor(health.status) as any}
+              color={getStatusColor(health.status)}
               size="medium"
             />
             <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
@@ -124,7 +124,7 @@ const HealthCheck: React.FC = () => {
                     </Box>
                     <Chip
                       label={health.checks.api.status}
-                      color={getStatusColor(health.checks.api.status) as any}
+                      color={getStatusColor(health.checks.api.status)}
                       size="small"
                       sx={{ mt: 1 }}
                     />
@@ -141,7 +141,7 @@ const HealthCheck: React.FC = () => {
                     </Box>
                     <Chip
                       label={health.checks.database.status}
-                      color={getStatusColor(health.checks.database.status) as any}
+                      color={getStatusColor(health.checks.database.status)}
                       size="small"
                       sx={{ mt: 1 }}
                     />
@@ -163,7 +163,7 @@ const HealthCheck: React.FC = () => {
                     </Box>
                     <Chip
                       label={health.checks.redis.status}
-                      color={getStatusColor(health.checks.redis.status) as any}
+                      color={getStatusColor(health.checks.redis.status)}
                       size="small"
                       sx={{ mt: 1 }}
                     />

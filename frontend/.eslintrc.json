@@ -1,8 +1,7 @@
 {
   "extends": [
     "react-app",
-    "react-app/jest",
-    "@typescript-eslint/recommended"
+    "react-app/jest"
   ],
   "parser": "@typescript-eslint/parser",
   "plugins": ["@typescript-eslint"],
