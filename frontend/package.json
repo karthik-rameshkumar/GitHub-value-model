@@ -73,7 +73,7 @@
     "@storybook/react": "^7.0.24",
     "@storybook/react-webpack5": "^7.0.24",
     "@storybook/testing-library": "^0.2.0",
-    "storybook": "^7.0.24"
+    "storybook": "^9.0.14"
   },
   "engines": {
     "node": ">=18.0.0",
