@@ -6,7 +6,11 @@ const router = Router();
 
 // Database connection
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
+  host: process.env.DATABASE_HOST || 'localhost',
+  port: parseInt(process.env.DATABASE_PORT || '5432'),
+  database: process.env.DATABASE_NAME || 'essp_dashboard',
+  user: process.env.DATABASE_USER || 'essp_user',
+  password: process.env.DATABASE_PASSWORD || 'essp_password',
 });
 
 // Redis connection
@@ -95,7 +99,7 @@ router.get('/all', async (req, res) => {
     healthChecks.database = { 
       status: 'unhealthy', 
       error: error instanceof Error ? error.message : 'Unknown error'
-    };
+    } as any;
   }
 
   // Check Redis
@@ -106,7 +110,7 @@ router.get('/all', async (req, res) => {
     healthChecks.redis = { 
       status: 'unhealthy', 
       error: error instanceof Error ? error.message : 'Unknown error'
-    };
+    } as any;
   }
 
   const overallStatus = Object.values(healthChecks).every(check => check.status === 'healthy') 

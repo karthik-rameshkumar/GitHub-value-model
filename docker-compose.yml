@@ -42,7 +42,14 @@ services:
     environment:
       NODE_ENV: development
       DATABASE_URL: postgresql://essp_user:essp_password@postgres:5432/essp_dashboard
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      DATABASE_NAME: essp_dashboard
+      DATABASE_USER: essp_user
+      DATABASE_PASSWORD: essp_password
       REDIS_URL: redis://redis:6379
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
       PORT: 3001
     ports:
       - "3001:3001"

@@ -101,7 +101,7 @@ const HealthCheck: React.FC = () => {
               icon={getStatusIcon(health.status)}
               label={`Overall Status: ${health.status.toUpperCase()}`}
               color={getStatusColor(health.status) as any}
-              size="large"
+              size="medium"
             />
             <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
               Last updated: {new Date(health.timestamp).toLocaleString()}
