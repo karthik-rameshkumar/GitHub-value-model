@@ -30,16 +30,16 @@ export class GitHubApiClient {
         const auth = createAppAuth({
           appId: this.config.app.appId,
           privateKey: this.config.app.privateKey,
-          installationId: this.config.app.installationId,
+          ...(this.config.app.installationId && { installationId: this.config.app.installationId }),
         });
 
         this.octokitRest = new Octokit({
           auth,
-          baseUrl: this.config.restApiUrl,
+          baseUrl: this.config.restApiUrl || 'https://api.github.com',
         });
 
         this.octokitGraphQL = graphql.defaults({
-          baseUrl: this.config.graphqlApiUrl,
+          baseUrl: this.config.graphqlApiUrl || 'https://api.github.com/graphql',
           request: {
             hook: auth.hook,
           },
@@ -53,11 +53,11 @@ export class GitHubApiClient {
 
         this.octokitRest = new Octokit({
           auth,
-          baseUrl: this.config.restApiUrl,
+          baseUrl: this.config.restApiUrl || 'https://api.github.com',
         });
 
         this.octokitGraphQL = graphql.defaults({
-          baseUrl: this.config.graphqlApiUrl,
+          baseUrl: this.config.graphqlApiUrl || 'https://api.github.com/graphql',
           request: {
             hook: auth.hook,
           },

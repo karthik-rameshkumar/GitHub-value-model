@@ -50,7 +50,7 @@ export class GitHubConfigManager {
       app: {
         appId: process.env.GITHUB_APP_ID || '',
         privateKey: process.env.GITHUB_PRIVATE_KEY || '',
-        installationId: process.env.GITHUB_INSTALLATION_ID || undefined,
+        ...(process.env.GITHUB_INSTALLATION_ID && { installationId: process.env.GITHUB_INSTALLATION_ID }),
       },
       webhookSecret: process.env.GITHUB_WEBHOOK_SECRET || '',
       organization: process.env.GITHUB_ORGANIZATION || '',

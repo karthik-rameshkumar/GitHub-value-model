@@ -74,7 +74,7 @@ router.get(
   validateQuery(OrganizationQuerySchema.omit({ org: true })),
   async (req: AuthenticatedRequest, res): Promise<void> => {
     try {
-      const { org } = req.params;
+      const { org } = req.params as { org: string };
       const { page, limit, type } = req.query as any;
       
       const repositories = await repositoryService.getOrganizationRepositories(
@@ -112,7 +112,7 @@ router.get(
   validateParams(RepositoryParamsSchema),
   async (req: AuthenticatedRequest, res): Promise<void> => {
     try {
-      const { owner, repo } = req.params;
+      const { owner, repo } = req.params as { owner: string; repo: string };
       
       const repository = await repositoryService.getRepository(owner, repo);
 
@@ -170,7 +170,7 @@ router.get(
   validateParams(RepositoryParamsSchema),
   async (req: AuthenticatedRequest, res): Promise<void> => {
     try {
-      const { owner, repo } = req.params;
+      const { owner, repo } = req.params as { owner: string; repo: string };
       
       const languages = await repositoryService.getRepositoryLanguages(owner, repo);
 
@@ -198,7 +198,7 @@ router.get(
   validateParams(RepositoryParamsSchema),
   async (req: AuthenticatedRequest, res): Promise<void> => {
     try {
-      const { owner, repo } = req.params;
+      const { owner, repo } = req.params as { owner: string; repo: string };
       
       const stats = await repositoryService.getRepositoryStats(owner, repo);
 

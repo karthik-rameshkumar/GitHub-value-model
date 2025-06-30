@@ -27,7 +27,7 @@ export class RepositoryService {
         fullName: data.full_name,
         description: data.description || null,
         language: data.language || null,
-        defaultBranch: data.default_branch,
+        defaultBranch: data.default_branch || 'main',
         isPrivate: data.private,
         createdAt: new Date(data.created_at || data.updated_at || Date.now()),
         updatedAt: new Date(data.updated_at || data.created_at || Date.now()),
@@ -51,7 +51,7 @@ export class RepositoryService {
         // Get repositories for a specific organization/user
         response = await client.rest.repos.listForOrg({
           org: owner,
-          type,
+          type: type === 'owner' ? 'public' : type as any,
           page,
           per_page: perPage
         });
@@ -71,7 +71,7 @@ export class RepositoryService {
         fullName: repo.full_name,
         description: repo.description || null,
         language: repo.language || null,
-        defaultBranch: repo.default_branch,
+        defaultBranch: repo.default_branch || 'main',
         isPrivate: repo.private,
         createdAt: new Date(repo.created_at || repo.updated_at || Date.now()),
         updatedAt: new Date(repo.updated_at || repo.created_at || Date.now()),
@@ -103,7 +103,7 @@ export class RepositoryService {
         fullName: repo.full_name,
         description: repo.description || null,
         language: repo.language || null,
-        defaultBranch: repo.default_branch,
+        defaultBranch: repo.default_branch || 'main',
         isPrivate: repo.private,
         createdAt: new Date(repo.created_at || repo.updated_at || Date.now()),
         updatedAt: new Date(repo.updated_at || repo.created_at || Date.now()),
@@ -192,7 +192,7 @@ export class RepositoryService {
         fullName: repo.full_name,
         description: repo.description || null,
         language: repo.language || null,
-        defaultBranch: repo.default_branch,
+        defaultBranch: repo.default_branch || 'main',
         isPrivate: repo.private,
         createdAt: new Date(repo.created_at || repo.updated_at || Date.now()),
         updatedAt: new Date(repo.updated_at || repo.created_at || Date.now()),

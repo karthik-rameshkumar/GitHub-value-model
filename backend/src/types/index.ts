@@ -155,7 +155,7 @@ export interface ChangeFailureData {
   deploymentId: string;
   deploymentTime: Date;
   isFailure: boolean;
-  recoveryTime?: Date;
+  recoveryTime?: Date | null;
   repository: string;
   environment: string;
 }
@@ -181,8 +181,8 @@ export interface GitHubPullRequest {
   state: 'open' | 'closed' | 'merged';
   createdAt: Date;
   updatedAt: Date;
-  mergedAt?: Date;
-  closedAt?: Date;
+  mergedAt?: Date | null;
+  closedAt?: Date | null;
   author: string;
   repository: string;
   additions: number;

@@ -38,7 +38,7 @@ router.get(
   validateQuery(PullRequestQuerySchema),
   async (req: AuthenticatedRequest, res): Promise<void> => {
     try {
-      const { owner, repo } = req.params;
+      const { owner, repo } = req.params as { owner: string; repo: string };
       const { page, limit, state } = req.query as any;
       
       const pullRequests = await pullRequestService.getPullRequests(
@@ -76,7 +76,7 @@ router.get(
   validateParams(PullRequestParamsSchema),
   async (req: AuthenticatedRequest, res): Promise<void> => {
     try {
-      const { owner, repo, pull_number } = req.params;
+      const { owner, repo, pull_number } = req.params as { owner: string; repo: string; pull_number: string };
       
       const pullRequest = await pullRequestService.getPullRequestDetails(
         owner, repo, Number(pull_number)
@@ -107,7 +107,7 @@ router.get(
   validateQuery(MetricsQuerySchema),
   async (req: AuthenticatedRequest, res): Promise<void> => {
     try {
-      const { owner, repo } = req.params;
+      const { owner, repo } = req.params as { owner: string; repo: string };
       const { since, until } = req.query as any;
       
       const metrics = await pullRequestService.calculateMetrics(
@@ -137,7 +137,7 @@ router.get(
   validateParams(PullRequestParamsSchema),
   async (req: AuthenticatedRequest, res): Promise<void> => {
     try {
-      const { owner, repo, pull_number } = req.params;
+      const { owner, repo, pull_number } = req.params as { owner: string; repo: string; pull_number: string };
       
       const leadTimeData = await pullRequestService.calculateLeadTime(
         owner, repo, Number(pull_number)

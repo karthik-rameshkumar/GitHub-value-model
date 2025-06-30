@@ -26,7 +26,7 @@ export class DeploymentService {
       const response = await client.rest.repos.listDeployments({
         owner,
         repo,
-        environment,
+        ...(environment && { environment }),
         page,
         per_page: perPage
       });
@@ -63,7 +63,8 @@ export class DeploymentService {
       }
 
       // Get the most recent status
-      return response.data[0].state;
+      const latestStatus = response.data[0];
+      return latestStatus ? latestStatus.state : 'pending';
     });
   }
 
@@ -101,8 +102,11 @@ export class DeploymentService {
       page++;
       
       // Stop if we've gone past our date range
-      if (since && deployments.length > 0 && deployments[deployments.length - 1].createdAt < since) {
-        hasMore = false;
+      if (since && deployments.length > 0) {
+        const lastDeployment = deployments[deployments.length - 1];
+        if (lastDeployment && lastDeployment.createdAt < since) {
+          hasMore = false;
+        }
       }
     }
 
@@ -176,7 +180,7 @@ export class DeploymentService {
       isFailure: deployment.status === 'failure' || deployment.status === 'error',
       recoveryTime: deployment.status === 'failure' || deployment.status === 'error' 
         ? deployment.updatedAt 
-        : undefined,
+        : null,
       repository: deployment.repository,
       environment: deployment.environment
     }));

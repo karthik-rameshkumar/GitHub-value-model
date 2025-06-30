@@ -30,8 +30,8 @@ router.get(
   validateQuery(CopilotQuerySchema),
   async (req: AuthenticatedRequest, res): Promise<void> => {
     try {
-      const { org } = req.params;
-      const { since, until } = req.query as any;
+      const { org } = req.params as { org: string };
+      const { since, until } = req.query as { since?: string; until?: string };
       
       const usage = await copilotService.getCopilotUsage(org, since, until);
 
@@ -59,8 +59,8 @@ router.get(
   validateQuery(CopilotQuerySchema),
   async (req: AuthenticatedRequest, res): Promise<void> => {
     try {
-      const { org } = req.params;
-      const { since, until } = req.query as any;
+      const { org } = req.params as { org: string };
+      const { since, until } = req.query as { since?: string; until?: string };
       
       const metrics = await copilotService.calculateCopilotMetrics(org, since, until);
 
@@ -88,8 +88,8 @@ router.get(
   validateQuery(CopilotQuerySchema),
   async (req: AuthenticatedRequest, res): Promise<void> => {
     try {
-      const { org } = req.params;
-      const { since, until } = req.query as any;
+      const { org } = req.params as { org: string };
+      const { since, until } = req.query as { since?: string; until?: string };
       
       const detailedMetrics = await copilotService.getCopilotMetricsDetailed(org, since, until);
 
@@ -116,7 +116,7 @@ router.get(
   validateParams(OrganizationParamsSchema),
   async (req: AuthenticatedRequest, res): Promise<void> => {
     try {
-      const { org } = req.params;
+      const { org } = req.params as { org: string };
       
       const seatInfo = await copilotService.getCopilotSeatInformation(org);
 
@@ -144,8 +144,8 @@ router.get(
   validateQuery(CopilotQuerySchema),
   async (req: AuthenticatedRequest, res): Promise<void> => {
     try {
-      const { org } = req.params;
-      const { since, until } = req.query as any;
+      const { org } = req.params as { org: string };
+      const { since, until } = req.query as { since?: string; until?: string };
       
       const productivityImpact = await copilotService.calculateProductivityImpact(org, since, until);
 
@@ -173,8 +173,8 @@ router.get(
   validateQuery(CopilotQuerySchema),
   async (req: AuthenticatedRequest, res): Promise<void> => {
     try {
-      const { org, username } = req.params;
-      const { since, until } = req.query as any;
+      const { org, username } = req.params as { org: string; username: string };
+      const { since, until } = req.query as { since?: string; until?: string };
       
       const userUsage = await copilotService.getUserCopilotUsage(org, username, since, until);
 

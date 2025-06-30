@@ -40,12 +40,12 @@ export class PullRequestService {
         state: pr.state as 'open' | 'closed' | 'merged',
         createdAt: new Date(pr.created_at),
         updatedAt: new Date(pr.updated_at),
-        mergedAt: pr.merged_at ? new Date(pr.merged_at) : undefined,
-        closedAt: pr.closed_at ? new Date(pr.closed_at) : undefined,
+        mergedAt: pr.merged_at ? new Date(pr.merged_at) : null,
+        closedAt: pr.closed_at ? new Date(pr.closed_at) : null,
         author: pr.user?.login || 'unknown',
         repository: `${owner}/${repo}`,
-        additions: pr.additions || 0,
-        deletions: pr.deletions || 0,
+        additions: 0, // Not available in list API, use getPullRequestDetails for actual values
+        deletions: 0, // Not available in list API, use getPullRequestDetails for actual values
         reviewers: [], // Will be populated separately
         reviewComments: 0 // Will be populated separately
       }));
@@ -91,12 +91,12 @@ export class PullRequestService {
         state: pr.state as 'open' | 'closed' | 'merged',
         createdAt: new Date(pr.created_at),
         updatedAt: new Date(pr.updated_at),
-        mergedAt: pr.merged_at ? new Date(pr.merged_at) : undefined,
-        closedAt: pr.closed_at ? new Date(pr.closed_at) : undefined,
+        mergedAt: pr.merged_at ? new Date(pr.merged_at) : null,
+        closedAt: pr.closed_at ? new Date(pr.closed_at) : null,
         author: pr.user?.login || 'unknown',
         repository: `${owner}/${repo}`,
-        additions: pr.additions || 0,
-        deletions: pr.deletions || 0,
+        additions: 0, // Not available in list API, use getPullRequestDetails for actual values
+        deletions: 0, // Not available in list API, use getPullRequestDetails for actual values
         reviewers: reviewers as string[],
         reviewComments: reviewCommentsResponse.data.length
       };
@@ -130,7 +130,15 @@ export class PullRequestService {
 
       // Find the first commit
       const firstCommit = commitsResponse.data[0];
-      const firstCommitTime = new Date(firstCommit.commit.author?.date || firstCommit.commit.committer?.date || pr.createdAt);
+      if (!firstCommit) {
+        return null;
+      }
+      
+      const firstCommitTime = new Date(
+        firstCommit.commit.author?.date || 
+        firstCommit.commit.committer?.date || 
+        pr.createdAt
+      );
       
       const leadTimeHours = (pr.mergedAt.getTime() - firstCommitTime.getTime()) / (1000 * 60 * 60);
 
@@ -176,8 +184,11 @@ export class PullRequestService {
         page++;
         
         // Stop if we've gone past our date range
-        if (since && prs.length > 0 && prs[prs.length - 1].createdAt < since) {
-          hasMore = false;
+        if (since && prs.length > 0) {
+          const lastPR = prs[prs.length - 1];
+          if (lastPR && lastPR.createdAt < since) {
+            hasMore = false;
+          }
         }
       }
 

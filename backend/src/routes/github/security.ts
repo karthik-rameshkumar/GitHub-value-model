@@ -25,7 +25,7 @@ router.get(
   validateQuery(SecurityQuerySchema),
   async (req: AuthenticatedRequest, res): Promise<void> => {
     try {
-      const { owner, repo } = req.params;
+      const { owner, repo } = req.params as { owner: string; repo: string };
       const { state } = req.query as any;
       
       const [vulnerabilityAlerts, secretAlerts, codeScanningAlerts] = await Promise.all([
@@ -67,7 +67,7 @@ router.get(
   validateQuery(SecurityQuerySchema),
   async (req: AuthenticatedRequest, res): Promise<void> => {
     try {
-      const { owner, repo } = req.params;
+      const { owner, repo } = req.params as { owner: string; repo: string };
       const { state } = req.query as any;
       
       const vulnerabilities = await securityService.getVulnerabilityAlerts(owner, repo, state as any);
@@ -98,7 +98,7 @@ router.get(
   })),
   async (req: AuthenticatedRequest, res): Promise<void> => {
     try {
-      const { owner, repo } = req.params;
+      const { owner, repo } = req.params as { owner: string; repo: string };
       const { state } = req.query as any;
       
       const secrets = await securityService.getSecretScanningAlerts(owner, repo, state);
@@ -127,7 +127,7 @@ router.get(
   validateQuery(SecurityQuerySchema),
   async (req: AuthenticatedRequest, res): Promise<void> => {
     try {
-      const { owner, repo } = req.params;
+      const { owner, repo } = req.params as { owner: string; repo: string };
       const { state } = req.query as any;
       
       const codeScanningAlerts = await securityService.getCodeScanningAlerts(owner, repo, state as any);
@@ -155,7 +155,7 @@ router.get(
   validateParams(RepositoryParamsSchema),
   async (req: AuthenticatedRequest, res): Promise<void> => {
     try {
-      const { owner, repo } = req.params;
+      const { owner, repo } = req.params as { owner: string; repo: string };
       
       const metrics = await securityService.calculateSecurityMetrics(owner, repo);
 
@@ -182,7 +182,7 @@ router.get(
   validateParams(RepositoryParamsSchema),
   async (req: AuthenticatedRequest, res): Promise<void> => {
     try {
-      const { owner, repo } = req.params;
+      const { owner, repo } = req.params as { owner: string; repo: string };
       
       const vulnerabilities = await securityService.getDependencyVulnerabilities(owner, repo);
 
@@ -209,7 +209,7 @@ router.get(
   validateParams(RepositoryParamsSchema),
   async (req: AuthenticatedRequest, res): Promise<void> => {
     try {
-      const { owner, repo } = req.params;
+      const { owner, repo } = req.params as { owner: string; repo: string };
       
       const advisories = await securityService.getSecurityAdvisories(owner, repo);
 

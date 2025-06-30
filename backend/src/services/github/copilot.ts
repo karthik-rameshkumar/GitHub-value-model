@@ -135,8 +135,8 @@ export class CopilotService {
         // Get detailed metrics including breakdown by editor, language, etc.
         const response = await client.request('GET /orgs/{org}/copilot/metrics', {
           org,
-          since,
-          until
+          ...(since && { since }),
+          ...(until && { until })
         });
         return response.data;
       } catch (error: any) {

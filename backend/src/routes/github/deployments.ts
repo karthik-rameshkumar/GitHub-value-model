@@ -33,7 +33,7 @@ router.get(
   validateQuery(DeploymentQuerySchema),
   async (req: AuthenticatedRequest, res): Promise<void> => {
     try {
-      const { owner, repo } = req.params;
+      const { owner, repo } = req.params as { owner: string; repo: string };
       const { page, limit, environment } = req.query as any;
       
       const deployments = await deploymentService.getDeployments(
@@ -72,7 +72,7 @@ router.get(
   validateQuery(MetricsQuerySchema),
   async (req: AuthenticatedRequest, res): Promise<void> => {
     try {
-      const { owner, repo } = req.params;
+      const { owner, repo } = req.params as { owner: string; repo: string };
       const { environment, since, until } = req.query as any;
       
       const metrics = await deploymentService.calculateMetrics(
@@ -103,7 +103,7 @@ router.get(
   validateQuery(MetricsQuerySchema),
   async (req: AuthenticatedRequest, res): Promise<void> => {
     try {
-      const { owner, repo } = req.params;
+      const { owner, repo } = req.params as { owner: string; repo: string };
       const { environment, since, until } = req.query as any;
       
       const changeFailureRate = await deploymentService.calculateChangeFailureRate(
@@ -134,7 +134,7 @@ router.get(
   validateQuery(MetricsQuerySchema),
   async (req: AuthenticatedRequest, res): Promise<void> => {
     try {
-      const { owner, repo } = req.params;
+      const { owner, repo } = req.params as { owner: string; repo: string };
       const { environment, since, until } = req.query as any;
       
       const meanTimeToRecovery = await deploymentService.calculateMeanTimeToRecovery(
@@ -165,7 +165,7 @@ router.get(
   validateQuery(MetricsQuerySchema),
   async (req: AuthenticatedRequest, res): Promise<void> => {
     try {
-      const { owner, repo } = req.params;
+      const { owner, repo } = req.params as { owner: string; repo: string };
       const { environment, since, until } = req.query as any;
       
       const changeFailureData = await deploymentService.getChangeFailureData(
