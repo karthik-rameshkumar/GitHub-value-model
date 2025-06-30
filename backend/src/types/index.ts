@@ -101,3 +101,109 @@ export interface PaginatedResponse<T> extends ApiResponse<T[]> {
     hasPrev: boolean;
   };
 }
+
+// GitHub API Integration Types
+export interface PullRequestMetrics {
+  leadTime: number;           // Time from first commit to merge
+  reviewTime: number;         // Time spent in review
+  mergeRate: number;         // PRs merged vs total PRs
+  averageSize: number;       // Lines of code changed
+  reviewerCount: number;     // Average number of reviewers
+}
+
+export interface DeploymentMetrics {
+  frequency: number;         // Deployments per day/week
+  success_rate: number;      // Successful deployments %
+  duration: number;          // Average deployment time
+  rollback_rate: number;     // Percentage of rollbacks
+}
+
+export interface SecurityMetrics {
+  vulnerabilities: {
+    critical: number;
+    high: number;
+    medium: number;
+    low: number;
+  };
+  secretsDetected: number;
+  codeQualityScore: number;
+}
+
+export interface CopilotMetrics {
+  acceptanceRate: number;    // Acceptance rate of suggestions
+  usagePatterns: {
+    dailyActiveUsers: number;
+    suggestionsShown: number;
+    suggestionsAccepted: number;
+  };
+  timeSavings: number;      // Estimated time saved in hours
+  adoption: {
+    teamCoverage: number;   // Percentage of team using Copilot
+  };
+}
+
+export interface LeadTimeData {
+  prNumber: number;
+  firstCommitTime: Date;
+  mergeTime: Date;
+  leadTimeHours: number;
+  repository: string;
+  author: string;
+}
+
+export interface ChangeFailureData {
+  deploymentId: string;
+  deploymentTime: Date;
+  isFailure: boolean;
+  recoveryTime?: Date;
+  repository: string;
+  environment: string;
+}
+
+export interface GitHubRepository {
+  id: number;
+  nodeId: string;
+  name: string;
+  fullName: string;
+  description?: string | null;
+  language?: string | null;
+  defaultBranch: string;
+  isPrivate: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+  pushedAt?: Date | null;
+}
+
+export interface GitHubPullRequest {
+  id: number;
+  number: number;
+  title: string;
+  state: 'open' | 'closed' | 'merged';
+  createdAt: Date;
+  updatedAt: Date;
+  mergedAt?: Date;
+  closedAt?: Date;
+  author: string;
+  repository: string;
+  additions: number;
+  deletions: number;
+  reviewers: string[];
+  reviewComments: number;
+}
+
+export interface GitHubDeployment {
+  id: number;
+  sha: string;
+  ref: string;
+  environment: string;
+  status: 'pending' | 'success' | 'failure' | 'error' | 'in_progress';
+  createdAt: Date;
+  updatedAt: Date;
+  repository: string;
+}
+
+export interface GitHubWebhookPayload {
+  action: string;
+  repository: GitHubRepository;
+  [key: string]: any;
+}
