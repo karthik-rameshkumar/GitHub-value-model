@@ -9,6 +9,7 @@ import dotenv from 'dotenv';
 import healthRoutes from './routes/health';
 import metricsRoutes from './routes/metrics';
 import githubRoutes from './routes/github';
+import valueRoutes from './routes/value';
 import { errorHandler } from './middleware/errorHandler';
 import { requestLogger } from './middleware/requestLogger';
 import { db } from './services/database';
@@ -53,6 +54,7 @@ app.use('/health', healthRoutes);
 // API v1 routes
 app.use('/api/v1/metrics', metricsRoutes);
 app.use('/api/v1/github', githubRoutes);
+app.use('/api', valueRoutes);
 
 // API routes placeholder for backward compatibility
 app.use('/api', (req, res) => {
