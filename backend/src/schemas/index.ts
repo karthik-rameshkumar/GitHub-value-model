@@ -134,3 +134,88 @@ export type MetricQueryInput = z.infer<typeof MetricQuerySchema>;
 export type TeamQueryInput = z.infer<typeof TeamQuerySchema>;
 export type ProjectQueryInput = z.infer<typeof ProjectQuerySchema>;
 export type RepositoryQueryInput = z.infer<typeof RepositoryQuerySchema>;
+
+// Value Calculator schemas
+export const AILeverageInputSchema = z.object({
+  potentialTimeSavingsHours: z.number().min(0).max(168), // Can't save more than hours in a week
+  averageHourlySalary: z.number().min(0).max(1000), // Reasonable salary range
+  totalEngineeringStaff: z.number().int().min(1).max(10000), // Reasonable team size
+  activeAIUsers: z.number().int().min(0).max(10000), // Can't exceed total staff
+  aiToolCostWeekly: z.number().min(0).max(1000000), // Reasonable cost range
+});
+
+export const EfficiencyCalculatorInputSchema = z.object({
+  costPerDeployment: z.number().min(0),
+  deploymentFrequencyImprovement: z.number().min(0).max(1000), // percentage
+  timeToMarketReduction: z.number().min(0).max(100), // percentage
+  incidentCostAvoidance: z.number().min(0),
+  technicalDebtReduction: z.number().min(0),
+  securityImprovementValue: z.number().min(0),
+  velocityImprovement: z.number().min(0).max(1000), // percentage
+  contextSwitchingReduction: z.number().min(0).max(100), // percentage
+  meetingTimeOptimization: z.number().min(0).max(100), // percentage
+});
+
+export const RevenueImpactInputSchema = z.object({
+  fasterFeatureDelivery: z.object({
+    averageFeatureRevenue: z.number().min(0),
+    timeReductionWeeks: z.number().min(0).max(52),
+    featuresPerQuarter: z.number().int().min(0).max(1000),
+  }),
+  customerRetentionImprovement: z.object({
+    incidentReduction: z.number().min(0).max(100), // percentage
+    customerLifetimeValue: z.number().min(0),
+    churnRateImprovement: z.number().min(0).max(100), // percentage
+  }),
+  capacityIncrease: z.object({
+    additionalFeatureCapacity: z.number().min(0).max(1000), // percentage
+    revenuePerFeature: z.number().min(0),
+  }),
+});
+
+export const CostSavingsInputSchema = z.object({
+  incidentResponseImprovement: z.object({
+    averageIncidentCost: z.number().min(0),
+    incidentReductionPercentage: z.number().min(0).max(100),
+    recoveryTimeImprovement: z.number().min(0).max(100), // percentage
+  }),
+  retentionImprovement: z.object({
+    averageRecruitmentCost: z.number().min(0),
+    turnoverReductionPercentage: z.number().min(0).max(100),
+    onboardingCostSavings: z.number().min(0),
+  }),
+  infrastructureEfficiency: z.object({
+    cloudCostReduction: z.number().min(0),
+    resourceUtilizationImprovement: z.number().min(0).max(100), // percentage
+  }),
+});
+
+export const ScenarioModelSchema = z.object({
+  name: z.string().min(1).max(255),
+  description: z.string().max(1000),
+  parameters: z.object({
+    aiAdoptionRate: z.number().min(0).max(100),
+    toolingInvestment: z.number().min(0),
+    trainingInvestment: z.number().min(0),
+    expectedImprovements: z.object({
+      velocityIncrease: z.number().min(0).max(1000),
+      qualityImprovement: z.number().min(0).max(100),
+      satisfactionIncrease: z.number().min(0).max(100),
+    }),
+  }),
+});
+
+export const FinancialModelingInputSchema = z.object({
+  initialInvestment: z.number().min(0),
+  discountRate: z.number().min(0).max(1), // Discount rate as decimal (0.1 for 10%)
+  timeHorizonYears: z.number().int().min(1).max(20),
+  cashFlows: z.array(z.number()).min(1).max(20),
+});
+
+// Type exports for value calculator
+export type AILeverageInputType = z.infer<typeof AILeverageInputSchema>;
+export type EfficiencyCalculatorInputType = z.infer<typeof EfficiencyCalculatorInputSchema>;
+export type RevenueImpactInputType = z.infer<typeof RevenueImpactInputSchema>;
+export type CostSavingsInputType = z.infer<typeof CostSavingsInputSchema>;
+export type ScenarioModelType = z.infer<typeof ScenarioModelSchema>;
+export type FinancialModelingInputType = z.infer<typeof FinancialModelingInputSchema>;
