@@ -207,3 +207,190 @@ export interface GitHubWebhookPayload {
   repository: GitHubRepository;
   [key: string]: any;
 }
+
+// Value Calculator Engine Types
+export interface AILeverageCalculator {
+  // Inputs
+  potentialTimeSavingsHours: number;    // Weekly time savings per developer
+  averageHourlySalary: number;          // Developer hourly compensation
+  totalEngineeringStaff: number;        // Total number of developers
+  activeAIUsers: number;                // Developers actively using AI tools
+  aiToolCostWeekly: number;             // Weekly cost of AI tools
+  
+  // Calculations
+  calculateWeeklyValue(): number;
+  calculateMonthlyROI(): number;
+  calculateYearlyProjection(): number;
+  calculateBreakEvenPoint(): number;
+}
+
+export interface AILeverageInput {
+  potentialTimeSavingsHours: number;
+  averageHourlySalary: number;
+  totalEngineeringStaff: number;
+  activeAIUsers: number;
+  aiToolCostWeekly: number;
+}
+
+export interface AILeverageResult {
+  weeklyValue: number;
+  weeklyCost: number;
+  weeklyROI: number;
+  monthlyROI: number;
+  yearlyValue: number;
+  yearlyROI: number;
+  breakEvenWeeks: number;
+  costPerDeveloper: number;
+  valuePerDeveloper: number;
+}
+
+export interface EfficiencyCalculatorInput {
+  // Deployment metrics
+  costPerDeployment: number;
+  deploymentFrequencyImprovement: number;
+  timeToMarketReduction: number;
+  
+  // Quality metrics
+  incidentCostAvoidance: number;
+  technicalDebtReduction: number;
+  securityImprovementValue: number;
+  
+  // Developer productivity
+  velocityImprovement: number;
+  contextSwitchingReduction: number;
+  meetingTimeOptimization: number;
+}
+
+export interface EfficiencyCalculatorResult {
+  totalEfficiencyGain: number;
+  deploymentSavings: number;
+  qualitySavings: number;
+  productivitySavings: number;
+  annualizedValue: number;
+}
+
+export interface RevenueImpactInput {
+  // Time-to-market improvements
+  fasterFeatureDelivery: {
+    averageFeatureRevenue: number;
+    timeReductionWeeks: number;
+    featuresPerQuarter: number;
+  };
+  
+  // Quality improvements
+  customerRetentionImprovement: {
+    incidentReduction: number;
+    customerLifetimeValue: number;
+    churnRateImprovement: number;
+  };
+  
+  // Developer efficiency
+  capacityIncrease: {
+    additionalFeatureCapacity: number;
+    revenuePerFeature: number;
+  };
+}
+
+export interface RevenueImpactResult {
+  timeToMarketRevenue: number;
+  retentionRevenue: number;
+  capacityRevenue: number;
+  totalRevenueImpact: number;
+  quarterlyProjection: number;
+  annualProjection: number;
+}
+
+export interface CostSavingsInput {
+  // Incident management
+  incidentResponseImprovement: {
+    averageIncidentCost: number;
+    incidentReductionPercentage: number;
+    recoveryTimeImprovement: number;
+  };
+  
+  // Developer retention
+  retentionImprovement: {
+    averageRecruitmentCost: number;
+    turnoverReductionPercentage: number;
+    onboardingCostSavings: number;
+  };
+  
+  // Infrastructure optimization
+  infrastructureEfficiency: {
+    cloudCostReduction: number;
+    resourceUtilizationImprovement: number;
+  };
+}
+
+export interface CostSavingsResult {
+  incidentSavings: number;
+  retentionSavings: number;
+  infrastructureSavings: number;
+  totalCostSavings: number;
+  monthlyRecurringSavings: number;
+  annualizedSavings: number;
+}
+
+export interface ScenarioModel {
+  name: string;
+  description: string;
+  parameters: {
+    aiAdoptionRate: number;
+    toolingInvestment: number;
+    trainingInvestment: number;
+    expectedImprovements: {
+      velocityIncrease: number;
+      qualityImprovement: number;
+      satisfactionIncrease: number;
+    };
+  };
+  projectedOutcomes: {
+    roi: number;
+    paybackPeriod: number;
+    riskFactors: string[];
+  };
+}
+
+export interface ValueReport {
+  executiveSummary: {
+    totalValue: number;
+    roi: number;
+    keyMetrics: string[];
+    recommendations: string[];
+  };
+  
+  detailedAnalysis: {
+    aiLeverage: AILeverageResult;
+    efficiency: EfficiencyCalculatorResult;
+    revenueImpact: RevenueImpactResult;
+    costSavings: CostSavingsResult;
+  };
+  
+  actionableInsights: {
+    optimizationOpportunities: string[];
+    investmentRecommendations: string[];
+    riskMitigation: string[];
+  };
+  
+  financialProjections: {
+    npv: number;
+    irr: number;
+    paybackPeriod: number;
+    tco: number;
+  };
+}
+
+export interface FinancialModelingInput {
+  initialInvestment: number;
+  discountRate: number;
+  timeHorizonYears: number;
+  cashFlows: number[];
+}
+
+export interface FinancialModelingResult {
+  npv: number;
+  irr: number;
+  paybackPeriod: number;
+  profitabilityIndex: number;
+  riskAdjustedReturn: number;
+}
