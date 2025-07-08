@@ -45,7 +45,7 @@ export class RevenueImpactCalculatorService {
     const { incidentReduction, customerLifetimeValue, churnRateImprovement } = customerRetentionImprovement;
     
     // Estimate customer base affected (simplified model)
-    const estimatedCustomerBase = 1000; // This would come from actual data in production
+    const estimatedCustomerBase = RevenueImpactCalculatorService.DEFAULT_ESTIMATED_CUSTOMER_BASE; // This would come from actual data in production
     
     // Calculate revenue from reduced churn
     const churnReductionRevenue = (churnRateImprovement / 100) * (estimatedCustomerBase * customerLifetimeValue / 52);
