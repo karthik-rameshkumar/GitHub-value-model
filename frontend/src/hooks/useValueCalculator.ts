@@ -48,27 +48,13 @@ export const useExecutiveSummary = (teamId?: string) => {
       }
     };
 
-    fetchData();
+    fetchExecutiveSummary();
   }, [teamId]);
 
   const refetch = () => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const response = await ValueCalculatorApiService.getExecutiveSummary(teamId);
-        if (response.success) {
-          setData(response.data);
-        } else {
-          setError('Failed to fetch executive summary');
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred');
-      } finally {
-        setLoading(false);
-      }
+    const refetch = () => {
+      fetchExecutiveSummary();
     };
-    fetchData();
   };
 
   return { data, loading, error, refetch };
