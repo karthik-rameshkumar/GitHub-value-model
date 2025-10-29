@@ -134,3 +134,44 @@ export type MetricQueryInput = z.infer<typeof MetricQuerySchema>;
 export type TeamQueryInput = z.infer<typeof TeamQuerySchema>;
 export type ProjectQueryInput = z.infer<typeof ProjectQuerySchema>;
 export type RepositoryQueryInput = z.infer<typeof RepositoryQuerySchema>;
+
+// GitHub API common schemas
+export const RepositoryParamsSchema = z.object({
+  owner: z.string().min(1),
+  repo: z.string().min(1),
+});
+
+export const MetricsQuerySchema = z.object({
+  since: z.string().optional().transform(val => val ? new Date(val) : undefined),
+  until: z.string().optional().transform(val => val ? new Date(val) : undefined),
+});
+
+export const PullRequestQuerySchema = z.object({
+  page: z.string().default('1').transform(Number),
+  limit: z.string().default('20').transform(Number),
+  state: z.enum(['open', 'closed', 'all']).default('all'),
+});
+
+export const DeploymentQuerySchema = z.object({
+  page: z.string().default('1').transform(Number),
+  limit: z.string().default('20').transform(Number),
+  environment: z.string().optional(),
+});
+
+export const DeploymentMetricsQuerySchema = MetricsQuerySchema.extend({
+  environment: z.string().optional(),
+});
+
+export const PullRequestParamsSchema = z.object({
+  owner: z.string().min(1),
+  repo: z.string().min(1),
+  pull_number: z.string().transform(Number),
+});
+
+// Type exports for GitHub schemas
+export type RepositoryParamsInput = z.infer<typeof RepositoryParamsSchema>;
+export type MetricsQueryInput = z.infer<typeof MetricsQuerySchema>;
+export type PullRequestQueryInput = z.infer<typeof PullRequestQuerySchema>;
+export type DeploymentQueryInput = z.infer<typeof DeploymentQuerySchema>;
+export type DeploymentMetricsQueryInput = z.infer<typeof DeploymentMetricsQuerySchema>;
+export type PullRequestParamsInput = z.infer<typeof PullRequestParamsSchema>;

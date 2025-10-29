@@ -1,34 +1,16 @@
 import { Router } from 'express';
-import { z } from 'zod';
 import { AuthenticatedRequest, authenticateToken } from '../../middleware/auth';
 import { validateQuery, validateParams } from '../../middleware/validation';
 import { pullRequestService } from '../../services/github';
-import { ApiResponse, PaginatedResponse } from '../../types';
+import { 
+  RepositoryParamsSchema, 
+  PullRequestQuerySchema, 
+  MetricsQuerySchema,
+  PullRequestParamsSchema
+} from '../../schemas';
+import { sendPaginatedResponse, sendSuccessResponse, sendErrorResponse } from '../../utils/routes';
 
 const router = Router();
-
-// Validation schemas
-const RepositoryParamsSchema = z.object({
-  owner: z.string().min(1),
-  repo: z.string().min(1),
-});
-
-const PullRequestQuerySchema = z.object({
-  page: z.string().default('1').transform(Number),
-  limit: z.string().default('20').transform(Number),
-  state: z.enum(['open', 'closed', 'all']).default('all'),
-});
-
-const MetricsQuerySchema = z.object({
-  since: z.string().optional().transform(val => val ? new Date(val) : undefined),
-  until: z.string().optional().transform(val => val ? new Date(val) : undefined),
-});
-
-const PullRequestParamsSchema = z.object({
-  owner: z.string().min(1),
-  repo: z.string().min(1),
-  pull_number: z.string().transform(Number),
-});
 
 // GET /api/v1/github/pull-requests/:owner/:repo - Get pull requests for repository
 router.get(
@@ -45,26 +27,9 @@ router.get(
         owner, repo, state, page, limit
       );
 
-      const response: PaginatedResponse<any> = {
-        success: true,
-        data: pullRequests,
-        pagination: {
-          page,
-          limit,
-          total: pullRequests.length,
-          pages: Math.ceil(pullRequests.length / limit),
-          hasNext: pullRequests.length === limit,
-          hasPrev: page > 1,
-        },
-      };
-
-      res.json(response);
+      sendPaginatedResponse(res, pullRequests, page, limit);
     } catch (error) {
-      console.error('Error fetching pull requests:', error);
-      res.status(500).json({
-        success: false,
-        error: 'Failed to fetch pull requests',
-      });
+      sendErrorResponse(res, error, 'Failed to fetch pull requests');
     }
   }
 );
@@ -82,19 +47,9 @@ router.get(
         owner, repo, Number(pull_number)
       );
 
-      const response: ApiResponse<any> = {
-        success: true,
-        data: pullRequest,
-      };
-
-      res.json(response);
+      sendSuccessResponse(res, pullRequest);
     } catch (error: any) {
-      console.error('Error fetching pull request:', error);
-      const statusCode = error.status === 404 ? 404 : 500;
-      res.status(statusCode).json({
-        success: false,
-        error: statusCode === 404 ? 'Pull request not found' : 'Failed to fetch pull request',
-      });
+      sendErrorResponse(res, error, 'Failed to fetch pull request');
     }
   }
 );
@@ -114,18 +69,9 @@ router.get(
         owner, repo, since, until
       );
 
-      const response: ApiResponse<any> = {
-        success: true,
-        data: metrics,
-      };
-
-      res.json(response);
+      sendSuccessResponse(res, metrics);
     } catch (error) {
-      console.error('Error calculating pull request metrics:', error);
-      res.status(500).json({
-        success: false,
-        error: 'Failed to calculate pull request metrics',
-      });
+      sendErrorResponse(res, error, 'Failed to calculate pull request metrics');
     }
   }
 );
@@ -143,19 +89,9 @@ router.get(
         owner, repo, Number(pull_number)
       );
 
-      const response: ApiResponse<any> = {
-        success: true,
-        data: leadTimeData,
-      };
-
-      res.json(response);
+      sendSuccessResponse(res, leadTimeData);
     } catch (error: any) {
-      console.error('Error calculating lead time:', error);
-      const statusCode = error.status === 404 ? 404 : 500;
-      res.status(statusCode).json({
-        success: false,
-        error: statusCode === 404 ? 'Pull request not found' : 'Failed to calculate lead time',
-      });
+      sendErrorResponse(res, error, 'Failed to calculate lead time');
     }
   }
 );

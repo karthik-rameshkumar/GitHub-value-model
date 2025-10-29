@@ -1,5 +1,6 @@
 import { githubClient } from './client';
 import { GitHubPullRequest, PullRequestMetrics, LeadTimeData } from '../../types';
+import { paginateWithDateFilter } from '../../utils/github';
 
 export class PullRequestService {
   private static instance: PullRequestService;
@@ -162,35 +163,13 @@ export class PullRequestService {
     const client = githubClient.getRestClient();
     
     return await githubClient.withRetry(async () => {
-      // Get all PRs in the time range
-      let allPRs: GitHubPullRequest[] = [];
-      let page = 1;
-      let hasMore = true;
-
-      while (hasMore) {
-        const prs = await this.getPullRequests(owner, repo, 'all', page, 100);
-        
-        // Filter by date range if specified
-        const filteredPRs = prs.filter(pr => {
-          if (since && pr.createdAt < since) return false;
-          if (until && pr.createdAt > until) return false;
-          return true;
-        });
-        
-        allPRs = allPRs.concat(filteredPRs);
-        
-        // If we got fewer than 100, we're done
-        hasMore = prs.length === 100;
-        page++;
-        
-        // Stop if we've gone past our date range
-        if (since && prs.length > 0) {
-          const lastPR = prs[prs.length - 1];
-          if (lastPR && lastPR.createdAt < since) {
-            hasMore = false;
-          }
-        }
-      }
+      // Get all PRs in the time range using the utility function
+      const allPRs = await paginateWithDateFilter<GitHubPullRequest>(
+        (page, perPage) => this.getPullRequests(owner, repo, 'all', page, perPage),
+        since,
+        until,
+        (pr) => pr.createdAt
+      );
 
       if (allPRs.length === 0) {
         return {
