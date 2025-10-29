@@ -3,35 +3,21 @@ import { z } from 'zod';
 import { AuthenticatedRequest, authenticateToken, requireRole } from '../../middleware/auth';
 import { validateBody, validateQuery, validateParams } from '../../middleware/validation';
 import { repositoryService } from '../../services/github';
-import { RepositoryParamsSchema } from '../../schemas';
+import {
+  RepositoryParamsSchema,
+  RepositoryListQuerySchema,
+  SyncRepositorySchema,
+  OrganizationQuerySchema
+} from '../../schemas';
 import { sendPaginatedResponse, sendSuccessResponse, sendErrorResponse } from '../../utils/routes';
 
 const router = Router();
-
-// Local validation schemas for routes-specific needs
-const RepositoryQuerySchema = z.object({
-  page: z.string().default('1').transform(Number),
-  limit: z.string().default('20').transform(Number),
-  type: z.enum(['all', 'owner', 'member']).default('all'),
-});
-
-const SyncRepositorySchema = z.object({
-  owner: z.string().min(1),
-  repo: z.string().min(1),
-});
-
-const OrganizationQuerySchema = z.object({
-  org: z.string().min(1),
-  type: z.enum(['all', 'public', 'private', 'forks', 'sources', 'member']).default('all'),
-  page: z.string().default('1').transform(Number),
-  limit: z.string().default('20').transform(Number),
-});
 
 // GET /api/v1/github/repositories - Get list of repositories
 router.get(
   '/',
   authenticateToken,
-  validateQuery(RepositoryQuerySchema),
+  validateQuery(RepositoryListQuerySchema),
   async (req: AuthenticatedRequest, res): Promise<void> => {
     try {
       const { page, limit, type } = req.query as any;

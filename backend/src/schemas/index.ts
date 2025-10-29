@@ -175,3 +175,26 @@ export type PullRequestQueryInput = z.infer<typeof PullRequestQuerySchema>;
 export type DeploymentQueryInput = z.infer<typeof DeploymentQuerySchema>;
 export type DeploymentMetricsQueryInput = z.infer<typeof DeploymentMetricsQuerySchema>;
 export type PullRequestParamsInput = z.infer<typeof PullRequestParamsSchema>;
+
+// Repository-specific route schemas
+export const RepositoryListQuerySchema = z.object({
+  page: z.string().default('1').transform(Number),
+  limit: z.string().default('20').transform(Number),
+  type: z.enum(['all', 'owner', 'member']).default('all'),
+});
+
+export const SyncRepositorySchema = z.object({
+  owner: z.string().min(1),
+  repo: z.string().min(1),
+});
+
+export const OrganizationQuerySchema = z.object({
+  org: z.string().min(1),
+  type: z.enum(['all', 'public', 'private', 'forks', 'sources', 'member']).default('all'),
+  page: z.string().default('1').transform(Number),
+  limit: z.string().default('20').transform(Number),
+});
+
+export type RepositoryListQueryInput = z.infer<typeof RepositoryListQuerySchema>;
+export type SyncRepositoryInput = z.infer<typeof SyncRepositorySchema>;
+export type OrganizationQueryInput = z.infer<typeof OrganizationQuerySchema>;

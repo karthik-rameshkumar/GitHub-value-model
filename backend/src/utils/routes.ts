@@ -19,6 +19,9 @@ export function sendSuccessResponse<T>(
 
 /**
  * Sends a standardized paginated response.
+ * Note: The pagination metadata is based on the current page's data length,
+ * which is appropriate for APIs that don't provide total count (like GitHub's API).
+ * The `total` field represents items in the current response, not all items.
  */
 export function sendPaginatedResponse<T>(
   res: Response,
@@ -42,6 +45,18 @@ export function sendPaginatedResponse<T>(
 }
 
 /**
+ * Maps default error messages to 404-specific messages.
+ */
+const notFoundMessages: Record<string, string> = {
+  'Failed to fetch pull request': 'Pull request not found',
+  'Failed to calculate lead time': 'Pull request not found',
+  'Failed to fetch repository': 'Repository not found',
+  'Failed to sync repository': 'Repository not found',
+  'Failed to fetch repository languages': 'Repository not found',
+  'Failed to fetch repository stats': 'Repository not found',
+};
+
+/**
  * Sends a standardized error response with appropriate status code.
  */
 export function sendErrorResponse(
@@ -51,8 +66,8 @@ export function sendErrorResponse(
 ): void {
   console.error(`${defaultMessage}:`, error);
   const statusCode = error.status === 404 ? 404 : 500;
-  const errorMessage = statusCode === 404 
-    ? `${defaultMessage.replace('Failed to', 'Not found:').replace('fetch', '').replace('calculate', '')}`
+  const errorMessage = statusCode === 404 && notFoundMessages[defaultMessage]
+    ? notFoundMessages[defaultMessage]
     : defaultMessage;
   
   res.status(statusCode).json({
