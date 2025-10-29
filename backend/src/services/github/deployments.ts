@@ -1,5 +1,6 @@
 import { githubClient } from './client';
 import { GitHubDeployment, DeploymentMetrics, ChangeFailureData } from '../../types';
+import { paginateWithDateFilter } from '../../utils/github';
 
 export class DeploymentService {
   private static instance: DeploymentService;
@@ -75,39 +76,18 @@ export class DeploymentService {
     since?: Date,
     until?: Date
   ): Promise<GitHubDeployment[]> {
-    let allDeployments: GitHubDeployment[] = [];
-    let page = 1;
-    let hasMore = true;
+    // Get all deployments in the time range using the utility function
+    const allDeployments = await paginateWithDateFilter<GitHubDeployment>(
+      (page, perPage) => this.getDeployments(owner, repo, environment, page, perPage),
+      since,
+      until,
+      (deployment) => deployment.createdAt
+    );
 
-    while (hasMore) {
-      const deployments = await this.getDeployments(owner, repo, environment, page, 100);
-      
-      // Filter by date range if specified
-      const filteredDeployments = deployments.filter(deployment => {
-        if (since && deployment.createdAt < since) return false;
-        if (until && deployment.createdAt > until) return false;
-        return true;
-      });
-      
-      // Get status for each deployment
-      for (const deployment of filteredDeployments) {
-        const status = await this.getDeploymentStatus(owner, repo, deployment.id);
-        deployment.status = status as any;
-      }
-      
-      allDeployments = allDeployments.concat(filteredDeployments);
-      
-      // If we got fewer than 100, we're done
-      hasMore = deployments.length === 100;
-      page++;
-      
-      // Stop if we've gone past our date range
-      if (since && deployments.length > 0) {
-        const lastDeployment = deployments[deployments.length - 1];
-        if (lastDeployment && lastDeployment.createdAt < since) {
-          hasMore = false;
-        }
-      }
+    // Get status for each deployment
+    for (const deployment of allDeployments) {
+      const status = await this.getDeploymentStatus(owner, repo, deployment.id);
+      deployment.status = status as any;
     }
 
     return allDeployments;

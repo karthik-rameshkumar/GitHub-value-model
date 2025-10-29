@@ -1,5 +1,6 @@
 import { githubClient } from './client';
 import { GitHubRepository } from '../../types';
+import { mapRepositoryData } from '../../utils/github';
 
 export class RepositoryService {
   private static instance: RepositoryService;
@@ -18,21 +19,7 @@ export class RepositoryService {
     
     return await githubClient.withRetry(async () => {
       const response = await client.rest.repos.get({ owner, repo });
-      const data = response.data;
-
-      return {
-        id: data.id,
-        nodeId: data.node_id,
-        name: data.name,
-        fullName: data.full_name,
-        description: data.description || null,
-        language: data.language || null,
-        defaultBranch: data.default_branch || 'main',
-        isPrivate: data.private,
-        createdAt: new Date(data.created_at || data.updated_at || Date.now()),
-        updatedAt: new Date(data.updated_at || data.created_at || Date.now()),
-        pushedAt: data.pushed_at ? new Date(data.pushed_at) : null
-      };
+      return mapRepositoryData(response.data);
     });
   }
 
@@ -64,19 +51,7 @@ export class RepositoryService {
         });
       }
 
-      return response.data.map(repo => ({
-        id: repo.id,
-        nodeId: repo.node_id,
-        name: repo.name,
-        fullName: repo.full_name,
-        description: repo.description || null,
-        language: repo.language || null,
-        defaultBranch: repo.default_branch || 'main',
-        isPrivate: repo.private,
-        createdAt: new Date(repo.created_at || repo.updated_at || Date.now()),
-        updatedAt: new Date(repo.updated_at || repo.created_at || Date.now()),
-        pushedAt: repo.pushed_at ? new Date(repo.pushed_at) : null
-      }));
+      return response.data.map(mapRepositoryData);
     });
   }
 
@@ -96,19 +71,7 @@ export class RepositoryService {
         per_page: perPage
       });
 
-      return response.data.map(repo => ({
-        id: repo.id,
-        nodeId: repo.node_id,
-        name: repo.name,
-        fullName: repo.full_name,
-        description: repo.description || null,
-        language: repo.language || null,
-        defaultBranch: repo.default_branch || 'main',
-        isPrivate: repo.private,
-        createdAt: new Date(repo.created_at || repo.updated_at || Date.now()),
-        updatedAt: new Date(repo.updated_at || repo.created_at || Date.now()),
-        pushedAt: repo.pushed_at ? new Date(repo.pushed_at) : null
-      }));
+      return response.data.map(mapRepositoryData);
     });
   }
 
@@ -185,19 +148,7 @@ export class RepositoryService {
         per_page: perPage
       });
 
-      const repositories = response.data.items.map(repo => ({
-        id: repo.id,
-        nodeId: repo.node_id,
-        name: repo.name,
-        fullName: repo.full_name,
-        description: repo.description || null,
-        language: repo.language || null,
-        defaultBranch: repo.default_branch || 'main',
-        isPrivate: repo.private,
-        createdAt: new Date(repo.created_at || repo.updated_at || Date.now()),
-        updatedAt: new Date(repo.updated_at || repo.created_at || Date.now()),
-        pushedAt: repo.pushed_at ? new Date(repo.pushed_at) : null
-      }));
+      const repositories = response.data.items.map(mapRepositoryData);
 
       return {
         repositories,

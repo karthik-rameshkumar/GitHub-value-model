@@ -1,29 +1,15 @@
 import { Router } from 'express';
-import { z } from 'zod';
 import { AuthenticatedRequest, authenticateToken } from '../../middleware/auth';
 import { validateQuery, validateParams } from '../../middleware/validation';
 import { deploymentService } from '../../services/github';
-import { ApiResponse, PaginatedResponse } from '../../types';
+import { 
+  RepositoryParamsSchema, 
+  DeploymentQuerySchema, 
+  DeploymentMetricsQuerySchema
+} from '../../schemas';
+import { sendPaginatedResponse, sendSuccessResponse, sendErrorResponse } from '../../utils/routes';
 
 const router = Router();
-
-// Validation schemas
-const RepositoryParamsSchema = z.object({
-  owner: z.string().min(1),
-  repo: z.string().min(1),
-});
-
-const DeploymentQuerySchema = z.object({
-  page: z.string().default('1').transform(Number),
-  limit: z.string().default('20').transform(Number),
-  environment: z.string().optional(),
-});
-
-const MetricsQuerySchema = z.object({
-  environment: z.string().optional(),
-  since: z.string().optional().transform(val => val ? new Date(val) : undefined),
-  until: z.string().optional().transform(val => val ? new Date(val) : undefined),
-});
 
 // GET /api/v1/github/deployments/:owner/:repo - Get deployments for repository
 router.get(
@@ -40,26 +26,9 @@ router.get(
         owner, repo, environment, page, limit
       );
 
-      const response: PaginatedResponse<any> = {
-        success: true,
-        data: deployments,
-        pagination: {
-          page,
-          limit,
-          total: deployments.length,
-          pages: Math.ceil(deployments.length / limit),
-          hasNext: deployments.length === limit,
-          hasPrev: page > 1,
-        },
-      };
-
-      res.json(response);
+      sendPaginatedResponse(res, deployments, page, limit);
     } catch (error) {
-      console.error('Error fetching deployments:', error);
-      res.status(500).json({
-        success: false,
-        error: 'Failed to fetch deployments',
-      });
+      sendErrorResponse(res, error, 'Failed to fetch deployments');
     }
   }
 );
@@ -69,7 +38,7 @@ router.get(
   '/:owner/:repo/metrics',
   authenticateToken,
   validateParams(RepositoryParamsSchema),
-  validateQuery(MetricsQuerySchema),
+  validateQuery(DeploymentMetricsQuerySchema),
   async (req: AuthenticatedRequest, res): Promise<void> => {
     try {
       const { owner, repo } = req.params as { owner: string; repo: string };
@@ -79,18 +48,9 @@ router.get(
         owner, repo, environment, since, until
       );
 
-      const response: ApiResponse<any> = {
-        success: true,
-        data: metrics,
-      };
-
-      res.json(response);
+      sendSuccessResponse(res, metrics);
     } catch (error) {
-      console.error('Error calculating deployment metrics:', error);
-      res.status(500).json({
-        success: false,
-        error: 'Failed to calculate deployment metrics',
-      });
+      sendErrorResponse(res, error, 'Failed to calculate deployment metrics');
     }
   }
 );
@@ -100,7 +60,7 @@ router.get(
   '/:owner/:repo/change-failure-rate',
   authenticateToken,
   validateParams(RepositoryParamsSchema),
-  validateQuery(MetricsQuerySchema),
+  validateQuery(DeploymentMetricsQuerySchema),
   async (req: AuthenticatedRequest, res): Promise<void> => {
     try {
       const { owner, repo } = req.params as { owner: string; repo: string };
@@ -110,18 +70,9 @@ router.get(
         owner, repo, environment, since, until
       );
 
-      const response: ApiResponse<any> = {
-        success: true,
-        data: { changeFailureRate },
-      };
-
-      res.json(response);
+      sendSuccessResponse(res, { changeFailureRate });
     } catch (error) {
-      console.error('Error calculating change failure rate:', error);
-      res.status(500).json({
-        success: false,
-        error: 'Failed to calculate change failure rate',
-      });
+      sendErrorResponse(res, error, 'Failed to calculate change failure rate');
     }
   }
 );
@@ -131,7 +82,7 @@ router.get(
   '/:owner/:repo/mean-time-to-recovery',
   authenticateToken,
   validateParams(RepositoryParamsSchema),
-  validateQuery(MetricsQuerySchema),
+  validateQuery(DeploymentMetricsQuerySchema),
   async (req: AuthenticatedRequest, res): Promise<void> => {
     try {
       const { owner, repo } = req.params as { owner: string; repo: string };
@@ -141,18 +92,9 @@ router.get(
         owner, repo, environment, since, until
       );
 
-      const response: ApiResponse<any> = {
-        success: true,
-        data: { meanTimeToRecovery },
-      };
-
-      res.json(response);
+      sendSuccessResponse(res, { meanTimeToRecovery });
     } catch (error) {
-      console.error('Error calculating mean time to recovery:', error);
-      res.status(500).json({
-        success: false,
-        error: 'Failed to calculate mean time to recovery',
-      });
+      sendErrorResponse(res, error, 'Failed to calculate mean time to recovery');
     }
   }
 );
@@ -162,7 +104,7 @@ router.get(
   '/:owner/:repo/change-failure-data',
   authenticateToken,
   validateParams(RepositoryParamsSchema),
-  validateQuery(MetricsQuerySchema),
+  validateQuery(DeploymentMetricsQuerySchema),
   async (req: AuthenticatedRequest, res): Promise<void> => {
     try {
       const { owner, repo } = req.params as { owner: string; repo: string };
@@ -172,18 +114,9 @@ router.get(
         owner, repo, environment, since, until
       );
 
-      const response: ApiResponse<any> = {
-        success: true,
-        data: changeFailureData,
-      };
-
-      res.json(response);
+      sendSuccessResponse(res, changeFailureData);
     } catch (error) {
-      console.error('Error fetching change failure data:', error);
-      res.status(500).json({
-        success: false,
-        error: 'Failed to fetch change failure data',
-      });
+      sendErrorResponse(res, error, 'Failed to fetch change failure data');
     }
   }
 );
